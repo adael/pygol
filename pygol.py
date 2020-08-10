@@ -1,9 +1,9 @@
 import numpy
 import pygame
 
-SW = 1000
+SW = 1600
 SH = 800
-SIZE = 10
+SIZE = 16
 COLS = int(SW / SIZE)
 ROWS = int(SH / SIZE)
 white = (255, 255, 255)
@@ -15,6 +15,7 @@ ranges = [
     (-1, 0), (+1, 0),
     (-1, 1), (0, 1), (1, 1)
 ]
+MAX_FPS = 20
 
 def start_game():
     global running, screen, gameState, newGameState, clock, font
@@ -64,7 +65,12 @@ def handle_event(event):
     elif event.type == pygame.KEYDOWN:
         if event.key == pygame.K_SPACE:
             paused = not paused
+        elif event.key == pygame.K_r:
+            clear_cells()
 
+def clear_cells():
+    global newGameState
+    newGameState = numpy.zeros((COLS, ROWS))
 
 def draw_grid():
     xs = 0
@@ -140,9 +146,10 @@ def draw_fps():
 def game_loop():
     start_game()
     while running:
-        clock.tick()
+        clock.tick(MAX_FPS)
         screen.fill(black)
-        draw_grid()
+        if paused:
+            draw_grid()
         draw_fps()
         process_cells()
         draw_cells()
